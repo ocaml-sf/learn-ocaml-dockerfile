@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # 10 min interval
-INTERVAL=10
+INTERVAL=600
 STOP=stop
 
 download_repository() {

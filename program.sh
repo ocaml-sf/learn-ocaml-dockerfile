@@ -14,9 +14,13 @@ upload_repository() {
 } 
 
 watch_upload() {
+    trap 'kill -TERM $PIDSLEEP' SIGTERM
+
     while ! [ -f $STOP ]
     do
-	sleep $INTERVAL
+	sleep $INTERVAL &
+	PIDSLEEP=$!
+	wait $PIDSLEEP
 	date
 	upload_repository $1
     done
@@ -26,15 +30,15 @@ before_exit() {
     kill -TERM $2
     wait $2
     touch $STOP
+    kill -TERM $3
     wait $3
     rm $STOP
-    upload_repository $1
 }
 
 trap 'before_exit $1 $PID_INSTANCE $PID_WATCH; exit 143' TERM
 
 download_repository $1
-dumb-init learn-ocaml --sync=sync --repo=repository &
+learn-ocaml --sync=sync --repo=repository &
 PID_INSTANCE=$!
 
 watch_upload $1 &

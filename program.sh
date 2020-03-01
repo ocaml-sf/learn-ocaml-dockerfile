@@ -6,7 +6,7 @@ download_repository() {
 }
 
 upload_repository() {
-	swift upload $1 repository/ sync/
+	swift upload --changed $1 repository/ sync/
 } 
 
 trap 'kill -TERM $PID; wait $PID; upload_repository $1; exit 143' TERM

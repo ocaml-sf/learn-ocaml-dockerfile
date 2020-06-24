@@ -1,13 +1,20 @@
 #!/bin/sh
+REPOSITORY=repository
+SYNC=sync
 
 download_repository() {
 	echo "swift download $1"
 	swift download $1
+	unzip $REPOSITORY.zip $SYNC.zip
+	rm $REPOSITORY.zip $SYNC.zip
 }
 
 upload_repository() {
-	swift upload $1 repository/ sync/
-} 
+	zip $REPOSITORY.zip -r $REPOSITORY
+	zip $SYNC.zip -r $SYNC
+	echo "swift upload $1"
+	swift upload $1 $REPOSITORY.zip $SYNC.zip
+}
 
 trap 'kill -TERM $PID; wait $PID; upload_repository $1; exit 143' TERM
 

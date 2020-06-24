@@ -11,7 +11,7 @@ download_repository() {
 
 upload_repository() {
     swift upload $1 repository/ sync/
-} 
+}
 
 watch_upload() {
     while ! [ -f $STOP ]

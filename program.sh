@@ -5,8 +5,11 @@ SYNC=sync
 download_repository() {
 	echo "swift download $1"
 	swift download $1
-	unzip $REPOSITORY.zip $SYNC.zip
-	rm $REPOSITORY.zip $SYNC.zip
+	unzip $REPOSITORY.zip
+	if [ -f $SYNC.zip ] then
+		unzip $SYNC.zip
+	fi
+	rm -f $REPOSITORY.zip $SYNC.zip
 }
 
 upload_repository() {

@@ -5,17 +5,23 @@ SYNC=sync
 download_repository() {
 	echo "swift download $1"
 	swift download $1
-	unzip $REPOSITORY.zip
-	if [ -f $SYNC.zip ] then
-		unzip $SYNC.zip
+	unzip -q $REPOSITORY.zip
+	echo "unzipping $REPOSITORY.zip returns $?"
+	rm -f $REPOSITORY.zip
+	if [ -f $SYNC.zip ]
+	then
+		unzip -q $SYNC.zip
+		echo "unzipping $SYNC.zip returns $?"
+		rm -f $SYNC.zip
 	fi
-	rm -f $REPOSITORY.zip $SYNC.zip
 }
 
 upload_repository() {
-	zip $REPOSITORY.zip -r $REPOSITORY
-	zip $SYNC.zip -r $SYNC
-	echo "swift upload $1"
+	zip -q $REPOSITORY.zip -r $REPOSITORY
+	echo "zipping $REPOSITORY returns $?"
+	zip -q $SYNC.zip -r $SYNC
+	echo "zipping $SYNC returns $?"
+	echo "swift upload $1 $REPOSITORY.zip $SYNC.zip"
 	swift upload --changed $1 $REPOSITORY.zip $SYNC.zip
 }
 

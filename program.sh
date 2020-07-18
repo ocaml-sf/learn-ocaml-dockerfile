@@ -16,9 +16,27 @@ download_repository() {
     fi
 }
 
+optimize_sync() {
+    echo "optimizing using git gc"
+    cd $SYNC
+    DIRS=$(find -mindepth 4 -maxdepth 4 -type d -not -path "\./\.git*")
+    for i in $DIRS
+    do
+        echo $i
+        cd $i
+        git gc -v
+        cd -
+    done
+    git gc
+    cd ..
+    echo "optimizing done"
+}
+
 upload_repository() {
     zip -q $REPOSITORY.zip -r $REPOSITORY
     echo "zipping $REPOSITORY returns $?"
+    optimize_sync
+    ls -l
     zip -q $SYNC.zip -r $SYNC
     echo "zipping $SYNC returns $?"
     echo "swift upload $1 $REPOSITORY.zip $SYNC.zip"

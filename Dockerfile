@@ -1,7 +1,8 @@
 FROM ocamlsf/learn-ocaml:latest
 
 USER root
-RUN apk add dumb-init py3-pip python3-dev gcc musl-dev linux-headers \
+RUN apk add coreutils dumb-init py3-pip zip unzip \
+            python3-dev gcc musl-dev linux-headers \
  && pip3 install --upgrade pip python-keystoneclient python-swiftclient \
  && apk del python3-dev gcc musl-dev linux-headers
 

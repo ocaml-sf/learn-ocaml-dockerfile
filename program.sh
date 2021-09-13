@@ -7,7 +7,9 @@ error() {
     echo "$1 failed" >&2
 }
 
-# 10 min interval
+# 30 min sleep at beginning
+BEGIN=1800
+# 10 min sleep interval
 INTERVAL=600
 STOP=stop
 
@@ -71,6 +73,9 @@ upload_repository() {
 watch_upload() {
     trap 'kill -TERM $PIDSLEEP' TERM
 
+    sleep $BEGIN &
+    PIDSLEEP=$!
+    wait $PIDSLEEP
     while ! [ -f $STOP ]
     do
 	sleep $INTERVAL &

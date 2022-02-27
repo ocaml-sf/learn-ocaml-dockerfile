@@ -48,7 +48,7 @@ clone_sync() {
     echo "cloning sync to avoid concurrency when writing"
     for repo in $(find_repositories $SYNC)
     do
-        git clone "$repo" $BACKUP/"$repo"
+        git clone --config user.name="Learn-OCaml user" "$repo" $BACKUP/"$repo"
     done
     # copy directories which are not repositories yet
     echo "cp -rn $SYNC $BACKUP/$SYNC"

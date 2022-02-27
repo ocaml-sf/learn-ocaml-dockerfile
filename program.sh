@@ -77,6 +77,9 @@ watch_upload() {
     sleep $BEGIN &
     PIDSLEEP=$!
     wait $PIDSLEEP
+    # In case the first sleep is killed
+    date
+    upload_repository "$1"
     while ! [ -f $STOP ]
     do
 	sleep $INTERVAL &

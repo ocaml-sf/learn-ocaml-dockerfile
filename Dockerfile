@@ -1,4 +1,4 @@
-FROM ocamlsf/learn-ocaml:0.12
+FROM ocamlsf/learn-ocaml:0.13.1
 
 USER root
 RUN apk add coreutils dumb-init py3-pip zip unzip \

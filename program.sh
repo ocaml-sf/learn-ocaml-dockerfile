@@ -27,27 +27,31 @@ download_repository() {
     fi
 }
 
+find_repositories() {
+    find "$1" -name .git -exec dirname {} \;
+}
+
 optimize_sync() {
     echo "optimizing using git gc"
-    cd "$SYNC" || error "optimizing_sync: cd $SYNC" || return
-    DIRS=$(find . -mindepth 4 -maxdepth 4 -type d -not -path "\./\.git*")
-    for i in $DIRS
+    for repo in $(find_repositories $SYNC)
     do
-        echo "$i"
-        cd "$i" || error "optimizing_sync: cd $i" || continue
+        echo "optimizing $repo"
+        cd "$repo" || error "optimizing_sync: cd $repo" || continue
         git gc
         cd - || error "optimizing_sync: cd - (assert false)" || continue
     done
-    git gc
-    cd ..
     echo "optimizing done"
 }
 
 clone_sync() {
     rm -rf ${BACKUP:?}/$SYNC
     echo "cloning sync to avoid concurrency when writing"
-    find $SYNC -name .git | while read -r repository; do
-        git clone "$repository" $BACKUP/"$repository"
+    for repo in $(find_repositories $SYNC)
+    do
+        git clone \
+            --config user.name="Learn-OCaml user" \
+            --config user.email="none@learn-ocaml.org" \
+            "$repo" $BACKUP/"$repo"
     done
     # copy directories which are not repositories yet
     echo "cp -rn $SYNC $BACKUP/$SYNC"
@@ -76,6 +80,9 @@ watch_upload() {
     sleep $BEGIN &
     PIDSLEEP=$!
     wait $PIDSLEEP
+    # In case the first sleep is killed
+    date
+    upload_repository "$1"
     while ! [ -f $STOP ]
     do
 	sleep $INTERVAL &
